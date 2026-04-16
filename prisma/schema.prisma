@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+}
+
+model Asset {
+  id         String      @id @default(cuid())
+  assetTag   String      @unique
+  location   String
+  status     AssetStatus @default(OPERATIONAL)
+  workOrders WorkOrder[]
+}
+
+model WorkOrder {
+  id         String          @id @default(cuid())
+  issueDesc  String          @db.Text
+  priority   String
+  status     WorkOrderStatus @default(PENDING)
+  reportedAt DateTime        @default(now())
+  resolvedAt DateTime?
+
+  // Relations
+  assetId String
+  asset   Asset  @relation(fields: [assetId], references: [id])
+}
+
+// - Enums
+enum Role {
+  ADMIN
+}
+
+enum AssetStatus {
+  OPERATIONAL
+  DOWN
+}
+
+enum WorkOrderPriority {
+  LOW
+  MEDIUM
+  HIGH
+  DOWNTIME
+}
+
+enum WorkOrderStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+}
