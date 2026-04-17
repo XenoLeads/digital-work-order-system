@@ -23,7 +23,7 @@ export type WorkOrder = {
   reportedAt?: string;
   resolvedAt?: string;
   assetId: string;
-  asset: Asset;
+  asset?: Asset;
 }
 
 enum UserRole {
