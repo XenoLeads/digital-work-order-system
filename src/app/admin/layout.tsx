@@ -11,7 +11,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex h-full">
+    <div className="flex h-full text-white">
       <div className="h-full flex-1 border-r-2 border-white bg-neutral-700 flex flex-col justify-start items-start p-4 gap-4">
         <SidebarButton name="Dashboard" route="admin" />
         <SidebarButton name="Settings" route="admin/settings" />
