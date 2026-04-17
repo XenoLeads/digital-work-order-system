@@ -30,11 +30,11 @@ model Asset {
 }
 
 model WorkOrder {
-  id         String          @id @default(cuid())
-  issueDesc  String          @db.Text
-  priority   String
-  status     WorkOrderStatus @default(PENDING)
-  reportedAt DateTime        @default(now())
+  id         String            @id @default(cuid())
+  issueDesc  String            @db.Text
+  priority   WorkOrderPriority
+  status     WorkOrderStatus   @default(PENDING)
+  reportedAt DateTime          @default(now())
   resolvedAt DateTime?
 
   // Relations
