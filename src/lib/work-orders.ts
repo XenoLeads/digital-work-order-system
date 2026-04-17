@@ -6,12 +6,12 @@ export async function getAllWorkOrders() {
   return workOrders
 }
 export async function submitWorkOrder({ issueDesc, priority, assetId }: WorkOrder) {
-  const workOrders = await prisma.workOrder.create({
+  const workOrder = await prisma.workOrder.create({
     data: {
       issueDesc,
       priority,
       assetId
     }
   })
-  return workOrders
+  return workOrder
 }
