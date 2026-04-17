@@ -26,24 +26,10 @@ export type WorkOrder = {
   asset?: Asset;
 }
 
-enum UserRole {
-  admin = "ADMIN",
-}
+export type UserRole = "ADMIN";
 
-enum AssetStatus {
-  operational = "OPERATIONAL",
-  down = "DOWN"
-}
+export type AssetStatus = "OPERATIONAL" | "DOWN";
 
-enum WorkOrderPriority {
-  low = "LOW",
-  medium = "MEDIUM",
-  high = "HIGH",
-  downtime = "DOWNTIME"
-}
+export type WorkOrderPriority = "LOW" | "MEDIUM" | "HIGH" | "DOWNTIME";
 
-enum WorkOrderStatus {
-  pending = "PENDING",
-  in_progress = "IN_PROGRESS",
-  resolved = "RESOLVED"
-}
+export type WorkOrderStatus = "PENDING" | "IN_PROGRESS" | "RESOLVED";
