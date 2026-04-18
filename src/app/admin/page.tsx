@@ -75,6 +75,8 @@ const Page = () => {
           <tbody>
             {(workOrders as WorkOrder[])
               .sort((a, b) => {
+                if (a.status === "RESOLVED" && b.status !== "RESOLVED") return 1;
+                if (a.status !== "RESOLVED" && b.status === "RESOLVED") return -1;
                 return WORK_ORDER_PRIORITY[a.priority!] - WORK_ORDER_PRIORITY[b.priority!];
               })
               .map((workOrder: WorkOrder) => {
