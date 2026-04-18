@@ -4,6 +4,12 @@ import { useState, useEffect } from "react";
 import type { WorkOrder } from "@/types";
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL;
 
+const STATUS_PRIORITY = {
+  PENDING: 1,
+  IN_PROGRESS: 2,
+  RESOLVED: 3,
+} as const;
+
 function formatWorkOrders(workOrders: WorkOrder[]) {
   let totalPending: number = 0;
   let totalCritialDowntime: number = 0;
@@ -38,12 +44,59 @@ const Page = () => {
 
     getAndSetWorkOrders();
   }, []);
+
+  async function changeWorkOrderStatus({ workOrderId, newStatus }: { workOrderId: string; newStatus: string }) {
+    const response = await fetch(`${BACKEND_URL}/work-orders`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: workOrderId, status: newStatus }),
+    });
+    const json = await response.json();
+    console.log(json);
+  }
   return (
     <div className="h-full">
       <div className="flex justify-around items-center w-full gap-4 p-4 h-20">
         <MetricCard label="Total Pending" value={workOrderMetrices.totalPending} />
         <MetricCard label="Critical Downtime Alerts" value={workOrderMetrices.totalCritialDowntime} />
         <MetricCard label="Resolved Today" value={workOrderMetrices.totalResolvedToday} />
+      </div>
+      <div className="p-4">
+        <table className="w-full">
+          <thead>
+            <tr>
+              <th className="border border-slate-300 p-2">Asset Tag</th>
+              <th className="border border-slate-300 p-2">Description</th>
+              <th className="border border-slate-300 p-2">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(workOrders as WorkOrder[])
+              .sort((a, b) => {
+                return STATUS_PRIORITY[a.status!] - STATUS_PRIORITY[b.status!];
+              })
+              .map((workOrder: WorkOrder) => {
+                return (
+                  <tr key={workOrder.id}>
+                    <td className="border border-slate-300 p-2">{workOrder.asset?.assetTag}</td>
+                    <td className="border border-slate-300 p-2">{workOrder.issueDesc}</td>
+                    <td className="border border-slate-300">
+                      <select
+                        className="bg-neutral-800 w-full h-full"
+                        name="status"
+                        defaultValue={workOrder.status}
+                        onChange={e => changeWorkOrderStatus({ workOrderId: workOrder.id!, newStatus: e.target.value })}
+                      >
+                        <option value="PENDING">Pending</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="RESOLVED">Resolved</option>
+                      </select>
+                    </td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </table>
       </div>
     </div>
   );

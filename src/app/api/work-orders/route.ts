@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { getAllWorkOrders, submitWorkOrder } from "@/lib/work-orders"
+import { getAllWorkOrders, submitWorkOrder, updateWorkOrder } from "@/lib/work-orders"
 
 export async function GET() {
   const workOrders = await getAllWorkOrders()
@@ -13,4 +13,11 @@ export async function POST(request: Request) {
   const { issueDesc, priority, assetId } = body
   const workOrders = await submitWorkOrder({ issueDesc, priority, assetId })
   return NextResponse.json({ success: true, data: workOrders })
+}
+
+export async function PUT(request: Request) {
+  const { id, status } = await request.json()
+  const updatedWorkOrder = await updateWorkOrder({ id, status })
+  console.log(updatedWorkOrder)
+  return NextResponse.json({ success: true, data: updatedWorkOrder })
 }

@@ -1,3 +1,4 @@
+import { WorkOrderStatus } from "@/generated/prisma/enums"
 import { prisma } from "@/lib/prisma"
 import type { WorkOrder } from "@/types"
 
@@ -18,4 +19,20 @@ export async function submitWorkOrder({ issueDesc, priority, assetId }: WorkOrde
     }
   })
   return workOrder
+}
+export async function updateWorkOrder({ id, status }: { id: string, status: string }) {
+  let updatedWorkOrder;
+  if (status === "RESOLVED") {
+    updatedWorkOrder = await prisma.workOrder.update({
+      data: { status: status as WorkOrderStatus, resolvedAt: new Date().toISOString() },
+      where: { id: id }
+    })
+  } else {
+    updatedWorkOrder = await prisma.workOrder.update({
+      data: { status: status as WorkOrderStatus },
+      where: { id: id }
+    })
+  }
+
+  return updatedWorkOrder
 }

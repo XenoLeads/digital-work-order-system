@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "db:seed": "tsx --env-file=.env ./src/lib/seed-db.ts",
-    "db:reset-seed": "pnpm exec prisma migrate reset --force && pnpm run db:seed"
+    "db:reset-seed": "pnpm exec prisma migrate reset --force && pnpm run db:seed",
+    "db:studio": "pnpm exec prisma studio"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.7.0",
