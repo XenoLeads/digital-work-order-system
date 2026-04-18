@@ -22,7 +22,7 @@ const Page = () => {
     fetchAndSetAssets();
   }, []);
 
-  async function handleWorkOrderSubmission() {
+  function handleWorkOrderSubmission() {
     const assetId = assets.find(asset => asset.assetTag === assetTag)?.id;
     if (!assetId) return toast.error("Couldn't find asset tag");
 

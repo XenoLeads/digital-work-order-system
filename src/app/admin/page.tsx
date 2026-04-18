@@ -1,4 +1,6 @@
 "use client";
+
+import toast, { Toaster } from "react-hot-toast";
 import MetricCard from "./components/MetricCard";
 import { useState, useEffect } from "react";
 import type { WorkOrder } from "@/types";
@@ -10,6 +12,13 @@ const WORK_ORDER_PRIORITY = {
   HIGH: 2,
   DOWNTIME: 1,
 } as const;
+
+function normalizeWorkOrderStatusString(string: string) {
+  return string
+    .split("_")
+    .map(str => str[0] + str.slice(1).toLowerCase())
+    .join(" ");
+}
 
 function formatWorkOrders(workOrders: WorkOrder[]) {
   let totalPending: number = 0;
@@ -46,14 +55,22 @@ const Page = () => {
     getAndSetWorkOrders();
   }, []);
 
-  async function changeWorkOrderStatus({ workOrderId, newStatus }: { workOrderId: string; newStatus: string }) {
-    const response = await fetch(`${BACKEND_URL}/work-orders`, {
+  function changeWorkOrderStatus({ workOrderId, newStatus }: { workOrderId: string; newStatus: string }) {
+    const response = fetch(`${BACKEND_URL}/work-orders`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: workOrderId, status: newStatus }),
+    }).then(async response => {
+      const json = await response.json();
+      if (!json.success) throw new Error("Couldn't change the status.");
+      console.log(json);
     });
-    const json = await response.json();
-    console.log(json);
+
+    toast.promise(response, {
+      loading: "Changing status...",
+      success: `Work order status changed to\n${normalizeWorkOrderStatusString(newStatus)}!`,
+      error: "Couldn't change the status.",
+    });
   }
   return (
     <div className="h-full">
@@ -103,6 +120,17 @@ const Page = () => {
           </tbody>
         </table>
       </div>
+      <Toaster
+        toastOptions={{
+          style: {
+            background: "#1c1c1c",
+            color: "#fff",
+            border: "2px solid white",
+          },
+        }}
+        position="top-right"
+        reverseOrder={false}
+      />
     </div>
   );
 };
