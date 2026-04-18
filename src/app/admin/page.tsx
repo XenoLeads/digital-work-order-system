@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import type { WorkOrder } from "@/types";
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL;
 
-const STATUS_PRIORITY = {
-  PENDING: 1,
-  IN_PROGRESS: 2,
-  RESOLVED: 3,
+const WORK_ORDER_PRIORITY = {
+  LOW: 4,
+  MEDIUM: 3,
+  HIGH: 2,
+  DOWNTIME: 1,
 } as const;
 
 function formatWorkOrders(workOrders: WorkOrder[]) {
@@ -67,19 +68,21 @@ const Page = () => {
             <tr>
               <th className="border border-slate-300 p-2">Asset Tag</th>
               <th className="border border-slate-300 p-2">Description</th>
+              <th className="border border-slate-300 p-2">Priority</th>
               <th className="border border-slate-300 p-2">Status</th>
             </tr>
           </thead>
           <tbody>
             {(workOrders as WorkOrder[])
               .sort((a, b) => {
-                return STATUS_PRIORITY[a.status!] - STATUS_PRIORITY[b.status!];
+                return WORK_ORDER_PRIORITY[a.priority!] - WORK_ORDER_PRIORITY[b.priority!];
               })
               .map((workOrder: WorkOrder) => {
                 return (
                   <tr key={workOrder.id}>
                     <td className="border border-slate-300 p-2">{workOrder.asset?.assetTag}</td>
                     <td className="border border-slate-300 p-2">{workOrder.issueDesc}</td>
+                    <td className="border border-slate-300 p-2">{workOrder.priority}</td>
                     <td className="border border-slate-300">
                       <select
                         className="bg-neutral-800 w-full h-full"
