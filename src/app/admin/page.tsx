@@ -73,13 +73,13 @@ const Page = () => {
     });
   }
   return (
-    <div className="h-full">
-      <div className="flex justify-around items-center w-full gap-4 p-4 h-20">
+    <div className="h-full flex flex-col">
+      <div className="flex justify-around items-center w-full gap-4 p-4 pb-0 flex-1">
         <MetricCard label="Total Pending" value={workOrderMetrices.totalPending} />
         <MetricCard label="Critical Downtime Alerts" value={workOrderMetrices.totalCritialDowntime} />
         <MetricCard label="Resolved Today" value={workOrderMetrices.totalResolvedToday} />
       </div>
-      <div className="p-4">
+      <div className="p-4 pt-0 h-[80%] flex-none overflow-y-auto">
         <table className="w-full">
           <thead>
             <tr>
@@ -102,9 +102,9 @@ const Page = () => {
                     <td className="border border-slate-300 p-2">{workOrder.asset?.assetTag}</td>
                     <td className="border border-slate-300 p-2">{workOrder.issueDesc}</td>
                     <td className="border border-slate-300 p-2">{workOrder.priority}</td>
-                    <td className="border border-slate-300">
+                    <td className="border border-slate-300 h-4">
                       <select
-                        className="bg-neutral-800 w-full h-full"
+                        className="bg-neutral-800 w-full h-full cursor-pointer"
                         name="status"
                         defaultValue={workOrder.status}
                         onChange={e => changeWorkOrderStatus({ workOrderId: workOrder.id!, newStatus: e.target.value })}
