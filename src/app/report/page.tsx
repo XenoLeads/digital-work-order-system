@@ -1,5 +1,6 @@
 "use client";
 
+import toast, { Toaster } from "react-hot-toast";
 import { useState, useEffect } from "react";
 import type { Asset as AssetType, WorkOrderPriority as WorkOrderPriorityType } from "@/types";
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL;
@@ -23,15 +24,24 @@ const Page = () => {
 
   async function handleWorkOrderSubmission() {
     const assetId = assets.find(asset => asset.assetTag === assetTag)?.id;
-    if (!assetId) return;
-    const response = await fetch(`${BACKEND_URL}/work-orders`, {
+    if (!assetId) return toast.error("Couldn't find asset tag");
+
+    const response = fetch(`${BACKEND_URL}/work-orders`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ assetId, priority: workOrderPriority, issueDesc: workOrderIssueDesc }),
+    }).then(async response => {
+      const json = await response.json();
+      if (!json.success) throw new Error("Couldn't post the work order");
+      clearInputs();
+      console.log(json);
     });
-    const json = await response.json();
-    if (json.success) clearInputs();
-    console.log(json);
+
+    toast.promise(response, {
+      loading: "Submitting...",
+      success: "Post Submitted!",
+      error: "Couldn't submit the post.",
+    });
   }
 
   function clearInputs() {
@@ -86,6 +96,17 @@ const Page = () => {
           Submit
         </button>
       </div>
+      <Toaster
+        toastOptions={{
+          style: {
+            background: "#1c1c1c",
+            color: "#fff",
+            border: "2px solid white",
+          },
+        }}
+        position="top-right"
+        reverseOrder={false}
+      />
     </div>
   );
 };
