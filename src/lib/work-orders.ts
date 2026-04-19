@@ -129,6 +129,10 @@ export async function updateWorkOrder({ id, status }: { id: string, status: stri
       data: { status: status as WorkOrderStatus, resolvedAt: null },
       where: { id: id }
     })
+    await prisma.asset.update({
+      data: { status: "DOWN" },
+      where: { id: updatedWorkOrder.assetId }
+    })
   }
 
   return updatedWorkOrder
