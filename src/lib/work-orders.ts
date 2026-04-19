@@ -10,6 +10,7 @@ export async function getAllWorkOrders() {
   })
   return workOrders
 }
+
 export async function submitWorkOrder({ issueDesc, priority, assetId }: WorkOrder) {
   const workOrder = await prisma.workOrder.create({
     data: {
@@ -18,13 +19,24 @@ export async function submitWorkOrder({ issueDesc, priority, assetId }: WorkOrde
       assetId
     }
   })
+  if (workOrder.priority === "DOWNTIME") await prisma.asset.update({
+    data: { status: "DOWN" },
+    where: { id: workOrder.assetId }
+  })
   return workOrder
 }
+
 export async function updateWorkOrder({ id, status }: { id: string, status: string }) {
   let updatedWorkOrder;
   if (status === "RESOLVED") {
     updatedWorkOrder = await prisma.workOrder.update({
-      data: { status: status as WorkOrderStatus, resolvedAt: new Date().toISOString() },
+      data: {
+        status: status as WorkOrderStatus, resolvedAt: new Date().toISOString(), asset: {
+          update: {
+            status: "OPERATIONAL"
+          }
+        }
+      },
       where: { id: id }
     })
   } else {
