@@ -7,6 +7,13 @@ import Table, { ColumnDef } from "@/app/admin/components/Table";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL;
 
+function capitalizeString(string: string) {
+  return string
+    .split("_")
+    .map(str => str[0] + str.slice(1).toLowerCase())
+    .join(" ");
+}
+
 const Page = () => {
   const [assetTag, setAssetTag] = useState("");
   const [assetLocation, setAssetLocation] = useState("");
@@ -69,6 +76,7 @@ const Page = () => {
   const columns: ColumnDef<Asset>[] = [
     { header: "Tag", key: "assetTag" },
     { header: "Location", key: "location" },
+    { header: "Location", render: row => capitalizeString(row.status as string) },
     {
       header: "Action",
       render: row => (
