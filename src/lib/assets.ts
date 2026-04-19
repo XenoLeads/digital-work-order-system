@@ -25,7 +25,7 @@ export async function createNewAsset({ tag, location, status }: {
       data: { assetTag: tag, location, status }
     })
   } else asset = await prisma.asset.update({
-    data: { isActive: true, location },
+    data: { isActive: true, location, status },
     where: { id: savedAsset.id }
   })
 
