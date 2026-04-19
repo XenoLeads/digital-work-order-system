@@ -6,6 +6,20 @@ import { useState, useEffect } from "react";
 import type { WorkOrder } from "@/types";
 import Table, { ColumnDef } from "@/app/admin/components/Table";
 
+type PriorityTag = {
+  LOW: string;
+  MEDIUM: string;
+  HIGH: string;
+  DOWNTIME: string;
+};
+
+const PRIORITY_TAG_STYLES: PriorityTag = {
+  LOW: "bg-green-500/10 text-green-500 border border-green-500/20",
+  MEDIUM: "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20",
+  HIGH: "bg-orange-500/10 text-orange-500 border border-orange-500/20",
+  DOWNTIME: "bg-red-500/10 text-red-500 border border-red-500/20",
+};
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL;
 
 function capitalizeString(string: string) {
@@ -70,14 +84,17 @@ const Page = () => {
   const columns: ColumnDef<WorkOrder>[] = [
     { header: "Asset Tag", render: row => row.asset?.assetTag },
     { header: "Description", key: "issueDesc" },
-    { header: "Priority", render: row => capitalizeString(row.priority) },
+    {
+      header: "Priority",
+      render: row => <div className={`text-center rounded-sm py-2 ${PRIORITY_TAG_STYLES[row.priority]}`}>{capitalizeString(row.priority)}</div>,
+    },
     {
       header: "Status",
       render: row => (
         <select
           defaultValue={row.status}
           onChange={e => changeWorkOrderStatus({ workOrderId: row.id as string, newStatus: e.target.value })}
-          className="bg-neutral-700  hover:bg-neutral-600 px-4 py-2 rounded-sm cursor-pointer"
+          className={`bg-neutral-700  hover:bg-neutral-600 px-4 py-2 rounded-sm cursor-pointer`}
         >
           <option value="PENDING">Pending</option>
           <option value="IN_PROGRESS">In Progress</option>

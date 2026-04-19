@@ -5,6 +5,16 @@ import { Asset, AssetStatus } from "@/types";
 import toast, { Toaster } from "react-hot-toast";
 import Table, { ColumnDef } from "@/app/admin/components/Table";
 
+type StatusTag = {
+  OPERATIONAL: string;
+  DOWN: string;
+};
+
+const STATUS_TAG_STYLES: StatusTag = {
+  OPERATIONAL: "bg-green-500/10 text-green-500 border border-green-500/20",
+  DOWN: "bg-red-500/10 text-red-500 border border-red-500/20",
+};
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL;
 
 function capitalizeString(string: string) {
@@ -76,15 +86,18 @@ const Page = () => {
   const columns: ColumnDef<Asset>[] = [
     { header: "Tag", key: "assetTag" },
     { header: "Location", key: "location" },
-    { header: "Location", render: row => capitalizeString(row.status as string) },
+    {
+      header: "Status",
+      render: row => <div className={`text-center rounded-sm py-2 ${STATUS_TAG_STYLES[row.status!]}`}>{capitalizeString(row.status as string)}</div>,
+    },
     {
       header: "Action",
       render: row => (
         <button
           onClick={() => deleteAsset(row.id as string, row.assetTag)}
-          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-sm cursor-pointer"
+          className="bg-red-800 hover:bg-red-900 px-4 py-2 rounded-sm cursor-pointer"
         >
-          Delete
+          Remove
         </button>
       ),
     },
