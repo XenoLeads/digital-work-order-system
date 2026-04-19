@@ -2,19 +2,15 @@ function capitalizeString(string) {
   return string[0].toUpperCase() + string.slice(1).toLowerCase();
 }
 
-const UserProfileCard = ({ useSession }) => {
-  const { data: session, status } = useSession();
-
+const UserProfileCard = ({ session }) => {
   return (
     <div className="bg-neutral-800 rounded-sm p-4">
-      {status === "loading" ? (
-        "Loading username..."
-      ) : status === "unauthenticated" ? (
-        "Access Denied"
-      ) : (
+      {session ? (
         <p>
-          Logged in as <strong>{capitalizeString(session?.user?.name)}</strong>
+          Logged in as <strong>{capitalizeString(session.user.name)}</strong>
         </p>
+      ) : (
+        <p>Loading</p>
       )}
     </div>
   );
