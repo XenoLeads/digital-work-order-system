@@ -5,6 +5,7 @@ import MetricCard from "@/app/admin/components/MetricCard";
 import { useState, useEffect } from "react";
 import type { WorkOrder } from "@/types";
 import Table, { ColumnDef } from "@/app/admin/components/Table";
+import PriorityDropdown from "./components/PriorityDropdown";
 
 type PriorityTag = {
   LOW: string;
@@ -90,17 +91,7 @@ const Page = () => {
     },
     {
       header: "Status",
-      render: row => (
-        <select
-          defaultValue={row.status}
-          onChange={e => changeWorkOrderStatus({ workOrderId: row.id as string, newStatus: e.target.value })}
-          className={`bg-neutral-700  hover:bg-neutral-600 px-4 py-2 rounded-sm cursor-pointer`}
-        >
-          <option value="PENDING">Pending</option>
-          <option value="IN_PROGRESS">In Progress</option>
-          <option value="RESOLVED">Resolved</option>
-        </select>
-      ),
+      render: row => <PriorityDropdown row={row} changeWorkOrderStatus={changeWorkOrderStatus} />,
     },
   ];
   return (
