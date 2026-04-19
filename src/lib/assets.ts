@@ -5,6 +5,9 @@ export async function getAllAssets() {
   const assets = await prisma.asset.findMany({
     where: {
       isActive: true
+    },
+    orderBy: {
+      assetTag: 'asc'
     }
   })
   return assets

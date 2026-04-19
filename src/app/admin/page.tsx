@@ -7,12 +7,6 @@ import type { WorkOrder } from "@/types";
 import Table, { ColumnDef } from "@/app/admin/components/Table";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL;
-const WORK_ORDER_PRIORITY = {
-  LOW: 4,
-  MEDIUM: 3,
-  HIGH: 2,
-  DOWNTIME: 1,
-} as const;
 
 function capitalizeString(string: string) {
   return string
@@ -100,14 +94,7 @@ const Page = () => {
         <MetricCard label="Resolved Today" value={workOrderMetrices.totalResolvedToday} />
       </div>
       <div className="p-4 pt-0 h-[80%] flex-none overflow-y-auto">
-        <Table
-          columns={columns}
-          data={(workOrders as WorkOrder[]).sort((a, b) => {
-            if (a.status === "RESOLVED" && b.status !== "RESOLVED") return 1;
-            if (a.status !== "RESOLVED" && b.status === "RESOLVED") return -1;
-            return WORK_ORDER_PRIORITY[a.priority!] - WORK_ORDER_PRIORITY[b.priority!];
-          })}
-        />
+        <Table columns={columns} data={workOrders as WorkOrder[]} />
       </div>
       <Toaster
         toastOptions={{

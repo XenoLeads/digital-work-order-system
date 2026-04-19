@@ -6,8 +6,18 @@ export async function getAllWorkOrders() {
   const workOrders = await prisma.workOrder.findMany({
     include: {
       asset: true
+    },
+    orderBy: {
+      priority: "desc",
     }
+  },)
+
+  workOrders.sort((a, b) => {
+    if (a.status === "RESOLVED" && b.status !== "RESOLVED") return 1
+    if (a.status !== "RESOLVED" && b.status === "RESOLVED") return -1
+    return 0
   })
+
   return workOrders
 }
 
@@ -23,6 +33,7 @@ export async function submitWorkOrder({ issueDesc, priority, assetId }: WorkOrde
     data: { status: "DOWN" },
     where: { id: workOrder.assetId }
   })
+
   return workOrder
 }
 
@@ -41,7 +52,7 @@ export async function updateWorkOrder({ id, status }: { id: string, status: stri
     })
   } else {
     updatedWorkOrder = await prisma.workOrder.update({
-      data: { status: status as WorkOrderStatus },
+      data: { status: status as WorkOrderStatus, resolvedAt: null },
       where: { id: id }
     })
   }
