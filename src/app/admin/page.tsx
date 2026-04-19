@@ -1,11 +1,12 @@
 "use client";
 
 import toast, { Toaster } from "react-hot-toast";
-import MetricCard from "./components/MetricCard";
+import MetricCard from "@/app/admin/components/MetricCard";
 import { useState, useEffect } from "react";
 import type { WorkOrder } from "@/types";
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL;
+import Table from "@/app/admin/components/WorkOrderTable";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL;
 const WORK_ORDER_PRIORITY = {
   LOW: 4,
   MEDIUM: 3,
@@ -80,45 +81,15 @@ const Page = () => {
         <MetricCard label="Resolved Today" value={workOrderMetrices.totalResolvedToday} />
       </div>
       <div className="p-4 pt-0 h-[80%] flex-none overflow-y-auto">
-        <table className="w-full">
-          <thead>
-            <tr>
-              <th className="border border-slate-300 p-2">Asset Tag</th>
-              <th className="border border-slate-300 p-2">Description</th>
-              <th className="border border-slate-300 p-2">Priority</th>
-              <th className="border border-slate-300 p-2">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(workOrders as WorkOrder[])
-              .sort((a, b) => {
-                if (a.status === "RESOLVED" && b.status !== "RESOLVED") return 1;
-                if (a.status !== "RESOLVED" && b.status === "RESOLVED") return -1;
-                return WORK_ORDER_PRIORITY[a.priority!] - WORK_ORDER_PRIORITY[b.priority!];
-              })
-              .map((workOrder: WorkOrder) => {
-                return (
-                  <tr key={workOrder.id}>
-                    <td className="border border-slate-300 p-2">{workOrder.asset?.assetTag}</td>
-                    <td className="border border-slate-300 p-2">{workOrder.issueDesc}</td>
-                    <td className="border border-slate-300 p-2">{workOrder.priority}</td>
-                    <td className="border border-slate-300 h-4">
-                      <select
-                        className="bg-neutral-800 w-full h-full cursor-pointer"
-                        name="status"
-                        defaultValue={workOrder.status}
-                        onChange={e => changeWorkOrderStatus({ workOrderId: workOrder.id!, newStatus: e.target.value })}
-                      >
-                        <option value="PENDING">Pending</option>
-                        <option value="IN_PROGRESS">In Progress</option>
-                        <option value="RESOLVED">Resolved</option>
-                      </select>
-                    </td>
-                  </tr>
-                );
-              })}
-          </tbody>
-        </table>
+        <Table
+          columns={["Asset Tag", "Description", "Priority", "Status"]}
+          rows={(workOrders as WorkOrder[]).sort((a, b) => {
+            if (a.status === "RESOLVED" && b.status !== "RESOLVED") return 1;
+            if (a.status !== "RESOLVED" && b.status === "RESOLVED") return -1;
+            return WORK_ORDER_PRIORITY[a.priority!] - WORK_ORDER_PRIORITY[b.priority!];
+          })}
+          changeWorkOrderStatusCallback={changeWorkOrderStatus}
+        />
       </div>
       <Toaster
         toastOptions={{
