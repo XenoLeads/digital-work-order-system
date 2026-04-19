@@ -1,14 +1,22 @@
+"use server"
+
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcrypt"
 
 async function main() {
   const adminPassword = await bcrypt.hash("john@pass", 10)
-  const admin = await prisma.user.create({
-    data: {
+  const userPassword = await bcrypt.hash("bob@pass", 10)
+  const admin = await prisma.user.createMany({
+    data: [{
       email: "user@admin.com",
       name: "john",
       password: adminPassword,
-    }
+    }, {
+      email: "user@user.com",
+      name: "bob",
+      password: userPassword,
+      role: "USER"
+    }]
   })
 
   console.log({ admin })
