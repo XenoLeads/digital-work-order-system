@@ -4,7 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import MetricCard from "@/app/admin/components/MetricCard";
 import { useState, useEffect } from "react";
 import type { WorkOrder } from "@/types";
-import Table from "@/app/admin/components/WorkOrderTable";
+import Table, { ColumnDef } from "@/app/admin/components/Table";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL;
 const WORK_ORDER_PRIORITY = {
@@ -14,7 +14,7 @@ const WORK_ORDER_PRIORITY = {
   DOWNTIME: 1,
 } as const;
 
-function normalizeWorkOrderStatusString(string: string) {
+function capitalizeString(string: string) {
   return string
     .split("_")
     .map(str => str[0] + str.slice(1).toLowerCase())
@@ -69,10 +69,30 @@ const Page = () => {
 
     toast.promise(response, {
       loading: "Changing status...",
-      success: `Work order status changed to\n${normalizeWorkOrderStatusString(newStatus)}!`,
+      success: `Work order status changed to\n${capitalizeString(newStatus)}!`,
       error: "Couldn't change the status.",
     });
   }
+  const columns: ColumnDef<WorkOrder>[] = [
+    { header: "Asset Tag", render: row => row.asset?.assetTag },
+    { header: "Description", key: "issueDesc" },
+    { header: "Priority", render: row => capitalizeString(row.priority) },
+    {
+      header: "Status",
+      render: row => (
+        <select
+          defaultValue={row.status}
+          onChange={e => changeWorkOrderStatus({ workOrderId: row.id as string, newStatus: e.target.value })}
+          className="bg-neutral-700  hover:bg-neutral-600 px-4 py-2 rounded-sm cursor-pointer"
+        >
+          <option value="LOW">Low</option>
+          <option value="MEDIUM">Medium</option>
+          <option value="HIGH">High</option>
+          <option value="DOWNTIME">Downtime</option>
+        </select>
+      ),
+    },
+  ];
   return (
     <div className="h-full flex flex-col">
       <div className="flex justify-around items-center w-full gap-4 p-4 pb-0 flex-1">
@@ -82,13 +102,12 @@ const Page = () => {
       </div>
       <div className="p-4 pt-0 h-[80%] flex-none overflow-y-auto">
         <Table
-          columns={["Asset Tag", "Description", "Priority", "Status"]}
-          rows={(workOrders as WorkOrder[]).sort((a, b) => {
+          columns={columns}
+          data={(workOrders as WorkOrder[]).sort((a, b) => {
             if (a.status === "RESOLVED" && b.status !== "RESOLVED") return 1;
             if (a.status !== "RESOLVED" && b.status === "RESOLVED") return -1;
             return WORK_ORDER_PRIORITY[a.priority!] - WORK_ORDER_PRIORITY[b.priority!];
           })}
-          changeWorkOrderStatusCallback={changeWorkOrderStatus}
         />
       </div>
       <Toaster
