@@ -85,10 +85,9 @@ const Page = () => {
           onChange={e => changeWorkOrderStatus({ workOrderId: row.id as string, newStatus: e.target.value })}
           className="bg-neutral-700  hover:bg-neutral-600 px-4 py-2 rounded-sm cursor-pointer"
         >
-          <option value="LOW">Low</option>
-          <option value="MEDIUM">Medium</option>
-          <option value="HIGH">High</option>
-          <option value="DOWNTIME">Downtime</option>
+          <option value="PENDING">Pending</option>
+          <option value="IN_PROGRESS">In Progress</option>
+          <option value="RESOLVED">Resolved</option>
         </select>
       ),
     },
