@@ -26,6 +26,7 @@ model Asset {
   assetTag   String      @unique
   location   String
   status     AssetStatus @default(OPERATIONAL)
+  isActive   Boolean     @default(true)
   workOrders WorkOrder[]
 }
 
