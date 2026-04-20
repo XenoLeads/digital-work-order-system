@@ -24,6 +24,7 @@ async function main() {
     data: {
       assetTag: "SRV-NY-001",
       location: "Data Center A - Rack 4",
+      status: "DOWN",
       workOrders: {
         create: [
           {
