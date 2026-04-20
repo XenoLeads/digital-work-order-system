@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -10,6 +11,14 @@
     "db:seed": "tsx --env-file=.env ./src/lib/seed-db.ts",
     "db:reset-seed": "pnpm exec prisma migrate reset --force && pnpm run db:seed",
     "db:studio": "pnpm exec prisma studio"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/engines",
+      "bcrypt",
+      "esbuild",
+      "prisma"
+    ]
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.7.0",
