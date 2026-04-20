@@ -1,11 +1,26 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useState, useActionState, useEffect, useRef } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { submitWorkOrder } from "@/actions";
 import type { Asset } from "@/types";
 
+type PriorityTag = {
+  LOW: string;
+  MEDIUM: string;
+  HIGH: string;
+  DOWNTIME: string;
+};
+
+const PRIORITY_TAG_STYLES: PriorityTag = {
+  LOW: "bg-green-500/10 text-green-500 border border-green-500/20",
+  MEDIUM: "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20",
+  HIGH: "bg-orange-500/10 text-orange-500 border border-orange-500/20",
+  DOWNTIME: "bg-red-500/10 text-red-500 border border-red-500/20",
+};
+
 export default function WorkOrderForm({ assets }: { assets: Asset[] }) {
+  const [dropdownValue, setDropdownValue] = useState("LOW");
   const [state, formAction, isPending] = useActionState(submitWorkOrder, null);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -13,6 +28,7 @@ export default function WorkOrderForm({ assets }: { assets: Asset[] }) {
     if (state?.success) {
       toast.success(state.success);
       formRef.current?.reset();
+      setTimeout(() => setDropdownValue("LOW"), 0);
     } else if (state?.error) {
       toast.error(state.error as string);
     }
@@ -45,7 +61,13 @@ export default function WorkOrderForm({ assets }: { assets: Asset[] }) {
           ))}
         </datalist>
 
-        <select className="bg-neutral-800 border-2 rounded-sm p-2" name="priority" id="priority" defaultValue="LOW">
+        <select
+          value={dropdownValue}
+          onChange={e => setDropdownValue(e.target.value)}
+          className={`px-4 py-2 rounded-sm cursor-pointer ${PRIORITY_TAG_STYLES[dropdownValue as keyof PriorityTag]}`}
+          name="priority"
+          id="priority"
+        >
           <option value="LOW">Low</option>
           <option value="MEDIUM">Medium</option>
           <option value="HIGH">High</option>
