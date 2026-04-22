@@ -65,11 +65,11 @@ const Page = () => {
     getAndSetWorkOrders();
   }, []);
 
-  function changeWorkOrderStatus({ workOrderId, newStatus }: { workOrderId: string; newStatus: string }) {
+  function changeWorkOrderStatus({ workOrderId, newStatus, priority }: { workOrderId: string; newStatus: string; priority: string }) {
     const response = fetch(`${BACKEND_URL}/work-orders`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: workOrderId, status: newStatus }),
+      body: JSON.stringify({ id: workOrderId, status: newStatus, priority }),
     }).then(async response => {
       const json = await response.json();
       if (!json.success) throw new Error("Couldn't change the status.");

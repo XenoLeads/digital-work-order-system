@@ -112,26 +112,18 @@ export async function submitWorkOrder({ issueDesc, priority, assetId }: WorkOrde
 }
 
 export async function updateWorkOrder({ id, status }: { id: string, status: string }) {
-  let updatedWorkOrder;
-  if (status === "RESOLVED") {
-    updatedWorkOrder = await prisma.workOrder.update({
-      data: {
-        status: status as WorkOrderStatus, resolvedAt: new Date().toISOString(), asset: {
-          update: {
-            status: "OPERATIONAL"
-          }
-        }
-      },
-      where: { id: id }
-    })
-  } else {
-    updatedWorkOrder = await prisma.workOrder.update({
-      data: { status: status as WorkOrderStatus, resolvedAt: null },
-      where: { id: id }
+  const updatedWorkOrder = await prisma.workOrder.update({
+    data: {
+      status: status as WorkOrderStatus, resolvedAt: status === "RESOLVED" ? new Date().toISOString() : null
+    },
+    where: { id }
+  })
+  if (updatedWorkOrder.priority as string === "DOWNTIME") {
+    const unresolvedCriticalWorkOrders = await prisma.workOrder.findMany({
+      where: { priority: "DOWNTIME", status: { not: "RESOLVED" }, assetId: updatedWorkOrder.assetId }
     })
     await prisma.asset.update({
-      data: { status: "DOWN" },
-      where: { id: updatedWorkOrder.assetId }
+      data: { status: unresolvedCriticalWorkOrders.length === 0 ? "OPERATIONAL" : "DOWN" }, where: { id: updatedWorkOrder.assetId }
     })
   }
 

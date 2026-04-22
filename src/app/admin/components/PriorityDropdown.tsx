@@ -19,7 +19,7 @@ const PriorityDropdown = ({
   changeWorkOrderStatus,
 }: {
   row: WorkOrder;
-  changeWorkOrderStatus: (params: { workOrderId: string; newStatus: string }) => void;
+  changeWorkOrderStatus: (params: { workOrderId: string; newStatus: string; priority: string }) => void;
 }) => {
   const [dropdownValue, setDropdownValue] = useState(row.status);
 
@@ -28,7 +28,7 @@ const PriorityDropdown = ({
     <select
       value={dropdownValue}
       onChange={e => {
-        changeWorkOrderStatus({ workOrderId: row.id as string, newStatus: e.target.value });
+        changeWorkOrderStatus({ workOrderId: row.id as string, newStatus: e.target.value, priority: row.priority });
         setDropdownValue(e.target.value as WorkOrderStatus);
       }}
       className={`px-4 py-2 rounded-sm cursor-pointer ${STATUS_DROPDOWN_STYLES[dropdownValue!]}`}
