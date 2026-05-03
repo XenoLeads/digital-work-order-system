@@ -46,7 +46,7 @@ export default function WorkOrderForm({ assets }: { assets: Asset[] }) {
 
         <input
           className="border-2 rounded-sm p-2"
-          placeholder="Asset Name..."
+          placeholder="Asset Tag..."
           type="text"
           name="assetTag"
           id="assetTag"
