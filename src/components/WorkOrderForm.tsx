@@ -74,7 +74,7 @@ export default function WorkOrderForm({ assets }: { assets: Asset[] }) {
           <option value="DOWNTIME">Downtime</option>
         </select>
 
-        <textarea className="w-full border-2 rounded-sm p-2" placeholder="Issue Description..." name="issueDesc" id="issueDesc" required />
+        <textarea className="w-full h-full border-2 rounded-sm p-2" placeholder="Issue Description..." name="issueDesc" id="issueDesc" required />
 
         <button type="submit" disabled={isPending} className="bg-neutral-700 py-4 rounded-sm cursor-pointer border disabled:opacity-50">
           {isPending ? "Submitting..." : "Submit"}
